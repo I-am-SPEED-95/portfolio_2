@@ -1,0 +1,7 @@
+test;Huur;500.0
+test;speed;95.0
+test;Verzekering;50.0
+test;movie;45.0
+Cars;Huur;600.00
+Cars;Boodschappen;100.00
+speed;speed;500.00

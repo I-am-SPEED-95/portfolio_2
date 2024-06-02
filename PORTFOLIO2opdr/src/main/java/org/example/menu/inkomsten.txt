@@ -1,3 +1,0 @@
-speed;superman;55.0
-test;godzilla;250.0
-test;kong;235.0

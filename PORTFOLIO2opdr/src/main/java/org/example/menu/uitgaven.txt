@@ -1,6 +1,0 @@
-test;Huur;500.0
-test;speed;95.0
-test;Verzekering;50.0
-test;movie;45.0
-speed;Huur;750.00
-speed;superman;4500.00
