@@ -4,4 +4,4 @@ test;Verzekering;50.0
 test;movie;45.0
 Cars;Huur;600.00
 Cars;Boodschappen;100.00
-speed;speed;500.00
+speed;Verzekering;75.00

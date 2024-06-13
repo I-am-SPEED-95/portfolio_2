@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class UitgavenMenu {
+public class UitgavenMenu extends MenuTemplate {
 
     private Scanner scanner;
     private Budget budget;
@@ -19,10 +19,15 @@ public class UitgavenMenu {
         this.budget = budget;
     }
 
-    public void toonUitgavenMenu() throws IOException {
+    @Override
+    protected void toonHeader() {
+        System.out.println("Uitgaven beheren voor budget: " + budget.getNaam());
+    }
+
+    @Override
+    protected void toonOpties() throws IOException {
         int keuze;
         do {
-            System.out.println("Uitgaven beheren voor budget: " + budget.getNaam());
             System.out.println("1. Uitgave toevoegen");
             System.out.println("2. Uitgave verwijderen");
             System.out.println("3. Terug naar budget menu");
@@ -40,11 +45,15 @@ public class UitgavenMenu {
                     break;
                 case 3:
                     System.out.println("Teruggaan naar het budgetmenu...");
-                    break;
+                    return;
                 default:
                     System.out.println("Ongeldige keuze, probeer opnieuw.");
             }
-        } while (keuze != 3);
+        } while (true);
+    }
+
+    public void toonUitgavenMenu() throws IOException {
+        toonMenu();
     }
 
     private void voegUitgaveToe() {
@@ -106,7 +115,6 @@ public class UitgavenMenu {
         }
     }
 
-
     private void verwijderUitgave() throws IOException {
         List<Uitgaven> uitgavenList = DataStorageUitgaven.loadUitgaven(budget.getNaam()); // Laad de huidige uitgaven van het budget
 
@@ -133,11 +141,8 @@ public class UitgavenMenu {
             uitgavenList.remove(teVerwijderenUitgave); // Verwijder de gekozen uitgave
             DataStorageUitgaven.saveUitgaven(uitgavenList, budget.getNaam()); // Sla de bijgewerkte lijst op
             System.out.println("Uitgave verwijderd: " + teVerwijderenUitgave.getCategorie() + " - Bedrag: " + teVerwijderenUitgave.getBedrag());
-        }else {
+        } else {
             System.out.println("Ongeldige keuze, probeer opnieuw.");
         }
     }
-
-
-
 }

@@ -1,5 +1,6 @@
 package org.example.budgetBeheer;
 
+import org.example.Subject;
 import org.example.dataBeheer.DataStorageInkomsten;
 import org.example.dataBeheer.DataStorageUitgaven;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Budget {
+public class Budget extends Subject {
     private String naam;
     private Date beginDatum;
     private Date eindDatum;
@@ -34,6 +35,7 @@ public class Budget {
 
     public void setNaam(String naam) {
         this.naam = naam;
+        notifyObservers();
     }
 
     public Date getBeginDatum() {
@@ -42,6 +44,7 @@ public class Budget {
 
     public void setBeginDatum(Date beginDatum) {
         this.beginDatum = beginDatum;
+        notifyObservers();
     }
 
     public Date getEindDatum() {
@@ -50,6 +53,7 @@ public class Budget {
 
     public void setEindDatum(Date eindDatum) {
         this.eindDatum = eindDatum;
+        notifyObservers();
     }
 
     public double getBudgetBedrag() {
@@ -58,6 +62,7 @@ public class Budget {
 
     public void setBudgetBedrag(double budgetBedrag) {
         this.budgetBedrag = budgetBedrag;
+        notifyObservers();
     }
 
     public List<Inkomsten> getInkomstenList() {
@@ -66,6 +71,7 @@ public class Budget {
 
     public void setInkomstenList(List<Inkomsten> inkomstenList) {
         this.inkomstenList = inkomstenList;
+        notifyObservers();
     }
 
     public List<Uitgaven> getUitgavenList() {
@@ -74,26 +80,37 @@ public class Budget {
 
     public void setUitgavenList(List<Uitgaven> uitgavenList) {
         this.uitgavenList = uitgavenList;
+        notifyObservers();
     }
 
     // Methode om een inkomst toe te voegen
     public void addInkomsten(Inkomsten inkomst) {
         this.inkomstenList.add(inkomst);
+        notifyObservers();
     }
 
     // Methode om een uitgave toe te voegen
     public void addUitgaven(Uitgaven uitgave) {
         this.uitgavenList.add(uitgave);
+        notifyObservers();
     }
 
     // Methode om een inkomst te verwijderen
     public boolean deleteInkomst(String bron) {
-        return this.inkomstenList.removeIf(inkomst -> inkomst.getBron().equalsIgnoreCase(bron));
+        boolean result = this.inkomstenList.removeIf(inkomst -> inkomst.getBron().equalsIgnoreCase(bron));
+        if (result) {
+            notifyObservers();
+        }
+        return result;
     }
 
     // Methode om een uitgave te verwijderen
     public boolean deleteUitgave(String categorie) {
-        return this.uitgavenList.removeIf(uitgave -> uitgave.getCategorie().equalsIgnoreCase(categorie));
+        boolean result = this.uitgavenList.removeIf(uitgave -> uitgave.getCategorie().equalsIgnoreCase(categorie));
+        if (result) {
+            notifyObservers();
+        }
+        return result;
     }
 
     // Bereken het totaal gesaved bedrag

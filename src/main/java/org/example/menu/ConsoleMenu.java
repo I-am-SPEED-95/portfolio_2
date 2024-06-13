@@ -1,5 +1,6 @@
 package org.example.menu;
 
+import org.example.Observer;
 import org.example.budgetBeheer.Budget;
 import org.example.dataBeheer.DataStorageService;
 
@@ -8,14 +9,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ConsoleMenu {
+public class ConsoleMenu extends MenuTemplate implements Observer {
     private Scanner scanner;
     private List<Budget> budgets;
 
     public ConsoleMenu() {
         this.scanner = new Scanner(System.in);
         this.budgets = new ArrayList<>();
+    }
 
+    @Override
+    protected void toonHeader() {
+        logo();
     }
 
     public void logo() {
@@ -24,17 +29,18 @@ public class ConsoleMenu {
         System.out.println("************************************");
     }
 
-    public void MainMenu() throws ParseException, IOException {
-        while (true) {
-            System.out.println("\nHoofdmenu:");
-            System.out.println("1. Maak een nieuw budget");
-            System.out.println("2. Toon alle budgetten");
-            System.out.println("3. Pas een budget aan");
-            System.out.println("4. Verwijder een budget");
-            System.out.println("5. Sluit programma");
-            System.out.println("Maak uw keuze: ");
-
+    @Override
+    protected void toonOpties() {
+        System.out.println("\nHoofdmenu:");
+        System.out.println("1. Maak een nieuw budget");
+        System.out.println("2. Toon alle budgetten");
+        System.out.println("3. Pas een budget aan");
+        System.out.println("4. Verwijder een budget");
+        System.out.println("5. Sluit programma");
+        System.out.println("Maak uw keuze: ");
+        try {
             int keuze = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
             switch (keuze) {
                 case 1:
                     maakNieuwBudget();
@@ -43,10 +49,10 @@ public class ConsoleMenu {
                     selecteerBudget();
                     break;
                 case 3:
-                     pasBudgetAan();
+                    pasBudgetAan();
                     break;
                 case 4:
-                     verwijderBudget();
+                    verwijderBudget();
                     break;
                 case 5:
                     System.out.println("Programma wordt afgesloten.");
@@ -54,6 +60,19 @@ public class ConsoleMenu {
                 default:
                     System.out.println("Ongeldige invoer, probeer opnieuw.");
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update() {
+        System.out.println("Het budget is gewijzigd.");
+    }
+
+    public void MainMenu() throws IOException {
+        while (true) {
+            toonMenu();
         }
     }
 
@@ -88,7 +107,6 @@ public class ConsoleMenu {
     }
 
     public void maakNieuwBudget() throws IOException {
-        scanner.nextLine();
         // Laad de bestaande budgetten
         budgets = DataStorageService.loadData();
 
@@ -127,6 +145,7 @@ public class ConsoleMenu {
         }
 
         Budget nieuwBudget = new Budget(naam, beginDatum, eindDatum, bedrag);
+        nieuwBudget.addObserver(this); // Voeg ConsoleMenu als observer toe
         budgets.add(nieuwBudget);
 
         DataStorageService.saveData(budgets);
@@ -134,7 +153,6 @@ public class ConsoleMenu {
     }
 
     public boolean toonAlleBudgetten() {
-        scanner.nextLine();
         if (budgets.isEmpty()) {
             System.out.println("Er zijn geen budgetten om weer te geven.");
             return false;
@@ -178,11 +196,11 @@ public class ConsoleMenu {
         }
 
         Budget geselecteerdBudget = budgets.get(keuze - 1);
+        geselecteerdBudget.addObserver(this); // Voeg ConsoleMenu als observer toe
         BudgetMenu budgetMenu = new BudgetMenu(geselecteerdBudget);
         budgetMenu.toonBudgetMenu();
         scanner.nextLine();
     }
-
 
     public void pasBudgetAan() throws IOException {
         scanner.nextLine();
@@ -197,7 +215,7 @@ public class ConsoleMenu {
         System.out.println("Kies het nummer van het budget dat u wilt aanpassen of typ 'terug' om terug te gaan:");
         String input = scanner.nextLine();
 
-        if(input.equalsIgnoreCase("terug")) {
+        if (input.equalsIgnoreCase("terug")) {
             return;
         }
 
@@ -215,6 +233,7 @@ public class ConsoleMenu {
         }
 
         Budget geselecteerdBudget = budgets.get(keuze - 1);
+        geselecteerdBudget.addObserver(this); // Voeg ConsoleMenu als observer toe
 
         System.out.println("U gaat het volgende budget aanpassen: " + geselecteerdBudget.getNaam() +
                 ". Als u wilt stoppen, typ dan 'terug'.");
@@ -250,9 +269,7 @@ public class ConsoleMenu {
         DataStorageService.saveData(budgets);
         System.out.println("Budget '" + geselecteerdBudget.getNaam() + "' is bijgewerkt en opgeslagen.");
     }
-
-
-    public void verwijderBudget() throws IOException {
+        public void verwijderBudget() throws IOException {
         scanner.nextLine();
         // Eerst laden de budgetten van het tekstbestand
         budgets = DataStorageService.loadData();

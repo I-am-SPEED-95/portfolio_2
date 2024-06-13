@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-public class TransactiesMenu {
+public class TransactiesMenu extends MenuTemplate {
 
     private Scanner scanner;
     private Budget budget; // Verwijzing naar het huidige budget
@@ -22,34 +22,45 @@ public class TransactiesMenu {
         this.budget = budget;
     }
 
-    public void toonTransactiesMenu() throws IOException {
+    @Override
+    protected void toonHeader() throws IOException {
         System.out.println("Overzicht voor budget: " + budget.getNaam());
         System.out.println("Periode: " + budget.getBeginDatum() + " - " + budget.getEindDatum());
         System.out.println("Totaal budget: " + budget.getBudgetBedrag());
         System.out.println("Totaal gesaved: " + budget.berekenGesaved());
         System.out.println("Totaal gespendeerd: " + budget.berekenGespendeerd());
         System.out.println("----------------------------------------------------------------");
+    }
 
-        // Hier logica om alle transacties te tonen
-        toonAlleTransacties();
+    @Override
+    protected void toonOpties() {
+        try {
+            toonAlleTransacties();
 
-        System.out.println("1. Exporteer naar CSV");
-        System.out.println("2. Terug naar budget menu");
-        System.out.println("Maak uw keuze:");
+            System.out.println("1. Exporteer naar CSV");
+            System.out.println("2. Terug naar budget menu");
+            System.out.println("Maak uw keuze:");
 
-        int keuze = scanner.nextInt();
-        scanner.nextLine(); // Consumeer de resterende newline
+            int keuze = scanner.nextInt();
+            scanner.nextLine(); // Consumeer de resterende newline
 
-        switch (keuze) {
-            case 1:
-                exporteerNaarCSV();
-                break;
-            case 2:
-                System.out.println("Teruggaan naar het hoofdmenu...");
-                break;
-            default:
-                System.out.println("Ongeldige keuze, probeer opnieuw.");
+            switch (keuze) {
+                case 1:
+                    exporteerNaarCSV();
+                    break;
+                case 2:
+                    System.out.println("Teruggaan naar het hoofdmenu...");
+                    return;
+                default:
+                    System.out.println("Ongeldige keuze, probeer opnieuw.");
+            }
+        } catch (IOException e) {
+            System.err.println("Er is een fout opgetreden: " + e.getMessage());
         }
+    }
+
+    public void toonTransactiesMenu() throws IOException {
+        toonMenu();
     }
 
     private void toonAlleTransacties() throws IOException {
@@ -88,4 +99,3 @@ public class TransactiesMenu {
         System.out.println("Transacties zijn geëxporteerd naar: " + csvBestandPath);
     }
 }
-

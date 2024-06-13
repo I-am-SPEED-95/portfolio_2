@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-public class InkomstenMenu {
+public class InkomstenMenu extends MenuTemplate {
 
     private Scanner scanner;
     private Budget budget; // Verwijzing naar het huidige budget
@@ -18,10 +18,15 @@ public class InkomstenMenu {
         this.budget = budget;
     }
 
-    public void toonInkomstenMenu() {
+    @Override
+    protected void toonHeader() {
+        System.out.println("Inkomsten beheren voor budget: " + budget.getNaam());
+    }
+
+    @Override
+    protected void toonOpties() {
         int keuze;
         do {
-            System.out.println("Inkomsten beheren voor budget: " + budget.getNaam());
             System.out.println("1. Inkomst toevoegen");
             System.out.println("2. Inkomst verwijderen");
             System.out.println("3. Terug naar budget menu");
@@ -39,11 +44,15 @@ public class InkomstenMenu {
                     break;
                 case 3:
                     System.out.println("Teruggaan naar het budgetmenu...");
-                    break;
+                    return;
                 default:
                     System.out.println("Ongeldige keuze, probeer opnieuw.");
             }
-        } while (keuze != 3);
+        } while (true);
+    }
+
+    public void toonInkomstenMenu() throws IOException {
+        toonMenu();
     }
 
     private void voegInkomstToe() {
@@ -79,7 +88,6 @@ public class InkomstenMenu {
             System.err.println("Er is een fout opgetreden bij het opslaan van de inkomsten.");
         }
     }
-
 
     private void verwijderInkomst() {
         List<Inkomsten> inkomstenList;
@@ -133,5 +141,4 @@ public class InkomstenMenu {
             System.err.println("Er is een fout opgetreden bij het bijwerken van de inkomsten.");
         }
     }
-
 }
