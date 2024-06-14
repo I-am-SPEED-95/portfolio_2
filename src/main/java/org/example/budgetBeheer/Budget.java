@@ -148,4 +148,19 @@ public class Budget extends Subject {
 
         return totaalGespendeerd;
     }
+
+    public double berekenTotaalInkomen() {
+        return inkomstenList.stream().mapToDouble(Inkomsten::getBedrag).sum();
+    }
+
+    public double berekenTotaalUitgaven() {
+        return uitgavenList.stream().mapToDouble(Uitgaven::getBedrag).sum();
+    }
+
+    public boolean isBudgetOverschreden(double maxInkomen, double maxUitgaven) {
+        double totaalInkomen = berekenTotaalInkomen();
+        double totaalUitgaven = berekenTotaalUitgaven();
+        return (totaalInkomen > maxInkomen) || (totaalUitgaven < maxUitgaven);
+    }
+
 }
